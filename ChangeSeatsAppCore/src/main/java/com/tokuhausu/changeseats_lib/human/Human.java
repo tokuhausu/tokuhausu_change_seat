@@ -12,7 +12,8 @@ public class Human {
 	}
 	@Override
 	public String toString(){
-		return "group="+group+",number_sirial="+number_serial+",number_group="+number_group;
+		//return "group="+group+",number_sirial="+number_serial+",number_group="+number_group;
+		return ""+number_serial;
 	}
 	public String getGroup(){
 		return this.group;

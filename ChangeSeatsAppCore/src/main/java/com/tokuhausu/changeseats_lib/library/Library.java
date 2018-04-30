@@ -6,10 +6,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.tokuhausu.changeseats_lib.human.Member;
+
 public class Library {
 	public static int SizeSum(LinkedHashMap<?,?> param){
 		int result = 0;
 		for(List<Object> list:((LinkedHashMap<?,List<Object>>)param).values()){
+			result = result+ list.size();
+		}
+		return result;
+	}
+	public static int SizeSum(Member param){
+		int result = 0;
+		for(List<?> list:(param.getMember()).values()){
+			result = result+ list.size();
+		}
+		for(List<?> list:(param.getSpecial()).values()){
 			result = result+ list.size();
 		}
 		return result;

@@ -3,11 +3,10 @@ package com.tokuhausu.changeseats_lib;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.tokuhausu.changeseats_lib.human.Human;
+import com.tokuhausu.changeseats_lib.human.Member;
 
 public class Main {
 	public static void main(String[] args){
@@ -29,16 +28,21 @@ public class Main {
 		Integer[] seats =  {1,2,3,4,5,6};
 
 		param_1.addAll(Arrays.asList(seats));
-		param_2.addAll(Arrays.asList(new Integer[]{1}));
+		param_2.addAll(Arrays.asList(new Integer[]{1,2,3,4}));
 		param_3.put("boy",Arrays.asList(new Human[]{boys[2]}));
 		param_3.put("girl",Arrays.asList(new Human[]{girls[1]}));
 
 
-		LinkedHashMap<String,List<Human>> result = ChangeLib.Chagnge(member,param_1,param_2,param_3);
-		for(Entry<String,List<Human>> entry:result.entrySet()){
-			for(Human human:entry.getValue()){
-				System.out.println(entry.getKey()+":"+human.getSerialNumber());
-			}
-		}
+		Member result = ChangeLib.Chagnge(member,param_1,param_2,param_3);
+		System.out.println(result);
+		HashMap<String,List<Integer>> seats_group = new HashMap<>();
+		List<Integer> p_3 = new ArrayList<>();
+		List<Integer> p_4 = new ArrayList<>();
+		p_3.addAll(Arrays.asList(new Integer[]{1,4,6}));
+		p_4.addAll(Arrays.asList(new Integer[]{2,3,5}));
+		seats_group.put("boy", p_3);
+		seats_group.put("girl", p_4);
+		List<Human> Value= ChangeLib.setSeat(boys.length+girls.length, result, seats_group, param_2);
+		System.out.println(Value);
 	}
 }

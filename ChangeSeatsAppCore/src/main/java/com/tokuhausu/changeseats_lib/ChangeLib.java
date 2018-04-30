@@ -1,16 +1,21 @@
 package com.tokuhausu.changeseats_lib;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
+
+import org.apache.commons.collections4.ListUtils;
 
 import com.tokuhausu.changeseats_lib.human.Human;
+import com.tokuhausu.changeseats_lib.human.Member;
 import com.tokuhausu.changeseats_lib.library.Library;
 
 public class ChangeLib {
-		public static LinkedHashMap<String,List<Human>> Chagnge(HashMap<String,List<Human>> member,List<Integer> seat,List<Integer> special_seat,HashMap<String,List<Human>> special_person){
+		public static Member Chagnge(HashMap<String,List<Human>> member,List<Integer> seat,List<Integer> special_seat,HashMap<String,List<Human>> special_person){
 			/*仕様
 			 * @parameter
 			 * ArrayList member : メンバーの番号とグループ
@@ -45,23 +50,24 @@ public class ChangeLib {
 				}
 			}
 
-			LinkedHashMap<String,List<Human>> result = new LinkedHashMap<String,List<Human>>();
+			LinkedHashMap<String,List<Human>> result_1 = new LinkedHashMap<String,List<Human>>();
+			LinkedHashMap<String,List<Human>> result_2 = new LinkedHashMap<String,List<Human>>();
 
 			//特別席を抽選
 			for(Entry<String,List<Human>> entry:special_person.entrySet()){
 				Collections.shuffle(entry.getValue());
-				result.put("SpHu_"+entry.getKey(),entry.getValue() );
+				result_1.put(entry.getKey(),entry.getValue() );
 			}
 
 			//通常席を抽選
 			for(Entry<String,List<Human>> entry:member.entrySet()){
-				result.put(entry.getKey(), entry.getValue());
-				Collections.shuffle(result.get(entry.getKey()));
+				result_2.put(entry.getKey(), entry.getValue());
+				Collections.shuffle(result_2.get(entry.getKey()));
 			}
 
-			return result;
+			return new Member(result_2,result_1);
 		}
-		public static void setSeat(int number_of_people,LinkedHashMap<String,List<Human>> member,HashMap<String,List<Integer>> seats,List<Integer> special_seat){
+		public static List<Human> setSeat(int number_of_people,Member member,HashMap<String,List<Integer>> seats,List<Integer> special_seat){
 			/*仕様
 			 * @parameter
 			 * int number_of_people
@@ -79,14 +85,35 @@ public class ChangeLib {
 			 * *特別席の番号
 			 */
 
-			if(number_of_people == Library.SizeSum(member)){
+			List<Human> result = new ArrayList<>();
+			IntStream.range(0, number_of_people).forEach(i -> result.add(null));
+			if(number_of_people != Library.SizeSum(member)){
 				//人数が不正
+				System.out.println("人数が不正です");
+				return null;
 			}
-			//特別席から抽選
-			for(Entry<String,List<Human>> entry:member.entrySet()){
-				if(entry.getKey().contains("SPHu_")){
-					
+			for(List<Integer> list : seats.values()){
+				Collections.shuffle(list);
+			}
+			Collections.shuffle(special_seat);
+			System.out.println(seats);
+			//特別席から割り振り
+			for(Entry<String,List<Human>> entry:member.getSpecial().entrySet()){
+				for(Human human:entry.getValue()){
+						ListUtils.intersection(seats.get(entry.getKey()), special_seat).stream().limit(1).forEach(i -> {
+						result.set(i-1, human);
+						seats.get(human.getGroup()).remove(new Integer(i));
+					});
 				}
 			}
+			//通常席に割り振り
+			for(Entry<String,List<Human>> entry:member.getMember().entrySet()){
+				for(Human human:entry.getValue()){
+					result.set(seats.get(entry.getKey()).get(0)-1, human);
+					seats.get(human.getGroup()).remove(new Integer(seats.get(entry.getKey()).get(0)));
+				}
+			}
+			return result;
 		}
+
 }
