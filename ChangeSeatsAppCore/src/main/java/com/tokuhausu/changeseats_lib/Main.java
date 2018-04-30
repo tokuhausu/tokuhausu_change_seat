@@ -28,7 +28,7 @@ public class Main {
 		Integer[] seats =  {1,2,3,4,5,6};
 
 		param_1.addAll(Arrays.asList(seats));
-		param_2.addAll(Arrays.asList(new Integer[]{1,2,3,4}));
+		param_2.addAll(Arrays.asList(new Integer[]{1,2,3,4,5,6}));
 		param_3.put("boy",Arrays.asList(new Human[]{boys[2]}));
 		param_3.put("girl",Arrays.asList(new Human[]{girls[1]}));
 
